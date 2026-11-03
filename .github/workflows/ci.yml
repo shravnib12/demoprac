@@ -1,29 +1,46 @@
-steps:
-  # Step 1: Get source code
-  - name: Checkout Source Code
-    uses: actions/checkout@v4
+name: Spring Boot CI Pipeline
 
-  # Step 2: Set up Java 17
-  - name: Set up JDK 17
-    uses: actions/setup-java@v4
-    with:
-      java-version: '17'
-      distribution: 'temurin'
+on:
+  push:
+    branches:
+      - main
 
-  # Step 3: Build Spring Boot application
-  - name: Build Application
-    run: mvn clean package
+  pull_request:
+    branches:
+      - main
 
-  # Step 4: Build Docker image
-  - name: Build Docker Image
-    run: docker build -t spring-web-app .
+jobs:
+  build:
+    name: Build Spring Boot Application
+    runs-on: ubuntu-latest
 
-  # Step 5: Display success message
-  - name: Build Successful
-    if: success()
-    run: echo "SUCCESS! Spring Boot application built successfully!"
+    steps:
 
-  # Step 6: Display failure message
-  - name: Build Failed
-    if: failure()
-    run: echo "ERROR! Spring Boot application build failed!"
+      # Step 1: Checkout source code
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      # Step 2: Setup Java 25
+      - name: Setup JDK 25
+        uses: actions/setup-java@v4
+        with:
+          java-version: '25'
+          distribution: 'temurin'
+
+      # Step 3: Build Spring Boot application
+      - name: Build Application
+        run: mvn clean package
+
+      # Step 4: Build Docker image
+      - name: Build Docker Image
+        run: docker build -t spring-web-app .
+
+      # Step 5: Display success message
+      - name: Build Successful
+        if: success()
+        run: echo "SUCCESS! Spring Boot application built successfully!"
+
+      # Step 6: Display failure message
+      - name: Build Failed
+        if: failure()
+        run: echo "ERROR! Spring Boot application build failed!"
